@@ -13,6 +13,7 @@ RUN apt-get install -y php5-cli php5-curl git
 # enable cloning based on http://stackoverflow.com/questions/23391839/clone-private-git-repo-with-dockerfile
 RUN mkdir /root/.ssh/
 # Copy over private key, and set permissions
+# on host: ln -s ~/.ssh/id_rsa .
 ADD id_rsa /root/.ssh/id_rsa
 # Create known_hosts
 RUN touch /root/.ssh/known_hosts
