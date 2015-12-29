@@ -7,9 +7,8 @@ FROM mazzolino/armhf-ubuntu:14.04
 # File Author / Maintainer
 MAINTAINER Colinas Maoling "colinas.maoling@t-online.de"
 ################## BEGIN INSTALLATION ######################
-# Install APACHE2 on micro best of my knowledge
-RUN /bin/bash -c "apt-get update && apt-get upgrade -y && apt-get clean && apt-get autoremove"
 ENV DEBIAN_FRONTEND noninteractive
+RUN /bin/bash -c "apt-get update && apt-get upgrade -y && apt-get clean && apt-get autoremove"
 RUN apt-get install -y php5-cli php5-curl git
 # enable cloning based on http://stackoverflow.com/questions/23391839/clone-private-git-repo-with-dockerfile
 RUN mkdir /root/.ssh/
