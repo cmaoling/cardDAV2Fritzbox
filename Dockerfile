@@ -13,6 +13,6 @@ RUN apt-get install -y php5-cli php5-curl git
 # secure cloning based on http://stackoverflow.com/questions/23391839/clone-private-git-repo-with-dockerfile
 # doing the plain path instead:
 # Clone the conf files into the docker container
-ENV CONFIG /config/config.example.php
 RUN git clone http://git@github.com/cmaoling/carddav2fb.git
+ENV CONFIG /config/config.example.php
 VOLUME /config
