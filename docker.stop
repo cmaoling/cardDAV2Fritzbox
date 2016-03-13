@@ -1,0 +1,23 @@
+#!/bin/bash
+SECRET=${1:-$PWD/secret}
+echo "$0 <configuration directory=$SECRET>"
+GIT=`which git`
+IMAGE=${PWD##*/}
+IMAGE=`echo $IMAGE | tr '[:upper:]' '[:lower:]'`
+ID=`$GIT config --get user.id`
+for config in $SECRET/*.config ; do
+        filename=$(basename "$config")
+        extension="${filename##*.}"
+        CONTAINER_NAME="${filename%.*}"
+        CONTAINER=`docker ps -a --format="{{.ID}} {{.Names}}" --filter=name=$CONTAINER_NAME`
+        if [ `echo -n $CONTAINER | wc -c ` -gt 0 ]; then
+                CONTAINER_ID=`echo $CONTAINER | cut -d" " -f1`
+                echo -n "Found running ID=$CONTAINER_ID Container=$CONTAINER "`docker stop --time=5 $CONTAINER_ID | tr '\n' ' ' `
+                echo -n "- stopped; "`docker rm $CONTAINER_ID | tr '\n' ' '`
+                echo "- removed"
+        else
+                echo "No running container for $CONTAINER_NAME found."
+        fi
+done
+
+
