@@ -12,5 +12,10 @@ RUN apt-get install -y php5-cli php5-curl git
 # doing the plain path instead:
 # Clone the conf files into the docker container
 RUN git clone http://git@github.com/cmaoling/carddav2fb.git
+WORKDIR /carddav2fb
+RUN git pull
 ENV CONFIG /carddav2fb/config.example.php
 VOLUME /config
+ADD start.sh /start.sh
+RUN chmod 0755 /start.sh
+ENTRYPOINT ["bash", "/start.sh", "/config"]
