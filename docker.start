@@ -5,6 +5,8 @@ GIT=`which git`
 IMAGE=${PWD##*/}
 IMAGE=`echo $IMAGE | tr '[:upper:]' '[:lower:]'`
 ID=`$GIT config --get user.id`
+GATEWAY=`netstat -nr | awk '$1 == "0.0.0.0"{print$2}'`
+echo "Gateway: $GATEWAY"
 for config in $SECRET/*.config ; do 
 	filename=$(basename "$config")
 	extension="${filename##*.}"
@@ -16,7 +18,7 @@ for config in $SECRET/*.config ; do
         else
                 echo "No running container for $CONTAINER_NAME found."
                 echo "Starting container named $filename based on image $ID/$IMAGE and configuration $SECRET/$CONTAINER_NAME.config"
-                echo docker run -d -v  $SECRET:/config -e "CONFIG=/config/$CONTAINER_NAME.config" --name "$CONTAINER_NAME" $ID/$IMAGE
+                docker run -d --dns $GATEWAY -v  $SECRET:/config -e "CONFIG=/config/$CONTAINER_NAME.config" --name "$CONTAINER_NAME" $ID/$IMAGE
         fi
 done
 
