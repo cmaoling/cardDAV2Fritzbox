@@ -11,11 +11,15 @@ for config in $SECRET/*.config ; do
 	filename=$(basename "$config")
 	extension="${filename##*.}"
 	CONTAINER_NAME="${filename%.*}"
-        CONTAINER=`docker ps -a --format="{{.ID}} {{.Names}}" --filter=name=$CONTAINER_NAME`
+        CONTAINER=`docker ps -a --format="{{.ID}} {{.Names}}" --filter=name=$CONTAINER_NAME --filter=status=running`
         if [ `echo -n $CONTAINER | wc -c ` -gt 0 ]; then
                 CONTAINER_ID=`echo $CONTAINER | cut -d" " -f1`
                 echo "Found running ID=$CONTAINER_ID Container=$CONTAINER "
         else
+		for containerID in `docker ps -a --format="{{.ID}} {{.Names}}" --filter=name=$CONTAINER_NAME --filter=status=exited | cut -d" " -f1`; do
+			echo "Exited Container: $containerID"
+			docker rm $containerID
+		done
                 echo "No running container for $CONTAINER_NAME found."
                 echo "Starting container named $filename based on image $ID/$IMAGE and configuration $SECRET/$CONTAINER_NAME.config"
                 docker run -d --dns $GATEWAY -v  $SECRET:/config -e "CONFIG=/config/$CONTAINER_NAME.config" --name "$CONTAINER_NAME" $ID/$IMAGE
